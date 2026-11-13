@@ -1,3 +1,13 @@
+import {
+ ASSETS,
+ renderAsset
+} from '../core/AssetLibrary.js';
+import {
+
+ renderLandscape
+
+} from '../core/LandscapeEditor.js';
+
 import {streetLamps}
  from '../generators/StreetLife.js';
 import {parkDetails}
@@ -19,15 +29,33 @@ export class CityRenderer {
  this.geometries={front:new THREE.PlaneGeometry(1,1),side:new THREE.PlaneGeometry(1,1).rotateY(Math.PI/2),box:new THREE.BoxGeometry(1,1,1),cone:new THREE.ConeGeometry(1,1,7),sphere:new THREE.IcosahedronGeometry(1,1),cylinder:new THREE.CylinderGeometry(1,1,1,8)};const roof=new THREE.BufferGeometry();roof.setAttribute('position',new THREE.Float32BufferAttribute([-.5,0,-.5,.5,0,-.5,0,1,-.5, -.5,0,.5,0,1,.5,.5,0,.5, -.5,0,-.5,0,1,-.5,0,1,.5, -.5,0,-.5,0,1,.5,-.5,0,.5, .5,0,-.5,.5,0,.5,0,1,.5, .5,0,-.5,0,1,.5,0,1,-.5],3));roof.computeVertexNormals();this.geometries.roof=roof;this.batches=new Map();this.pickables=[];this.lights=addLighting(this.scene);this.build();this.flush();
  this.observer=new ResizeObserver(()=>this.resize(container));this.observer.observe(container);this.resize(container);
  }
- part(shape,color,x,y,z,w,h,d,id=null,rotation=0){const key=`${shape}:${color}`;if(!this.batches.has(key))this.batches.set(key,{shape,color,items:[]});this.batches.get(key).items.push({x,y,z,w,h,d,id,rotation});}
+ part(shape,color,x,y,z,w,h,d,id=null,rotation=0){
+
+ const t=this.buildingTransform;
+
+ if(t){
+
+  const dx=x-t.x;
+  const dz=z-t.z;
+
+  const cosine=Math.cos(t.angle);
+  const sine=Math.sin(t.angle);
+
+  x=t.x+dx*cosine+dz*sine;
+  z=t.z-dx*sine+dz*cosine;
+
+  rotation+=t.angle;
+ }
+ const key=`${shape}:${color}`;if(!this.batches.has(key))this.batches.set(key,{shape,color,items:[]});this.batches.get(key).items.push({x,y,z,w,h,d,id,rotation});}
  box(color,x,y,z,w,h,d,id=null){this.part('box',color,x,y,z,w,h,d,id);}
  build(){const s=this.state;
- this.box('#8d9c7f',0,-15,0,1210,25,1210);this.box('#b2c497',0,-1,0,1200,8,1200);
+ const size=s.boundary;
+ renderLandscape(this,s);
  // A recessed river and a raised, continuous riverside promenade.
- this.box('#68a9ad',0,3,0,110,1,1200);
- for(const x of [-59,59])this.box('#c6c7ac',x,4,0,8,5,1200);
- for(const x of [-74,74])this.box('#dbd7bf',x,3,0,20,2,1200);
- for(let z=-570;z<600;z+=52)this.box('#92c1bd',0,3.6,z,65,0.1,1.2);
+ this.box('#68a9ad',0,3,0,110,1,size);
+ for(const x of [-59,59])this.box('#c6c7ac',x,4,0,8,5,size);
+ for(const x of [-74,74])this.box('#dbd7bf',x,3,0,20,2,size);
+ for(let z=-size/2+30;z<size/2;z+=52)this.box('#92c1bd',0,3.6,z,65,0.1,1.2);
 
  // Procedural waterfront infrastructure.
  for(const p of waterfrontParts(s)){
@@ -52,7 +80,15 @@ export class CityRenderer {
    1.5,.65,1.5);
  }
 
- for(const r of s.roads){const {x,z}=r.position,{width:w,depth:d}=r.dimensions;this.box('#d4d2bc',x,3,z,w+9,2,d+9);this.box('#6f7b75',x,4.1,z,w,.3,d);
+ for(const r of s.roads){
+
+  if(r.path){
+
+   this.drawPathRoad(r);
+
+   continue;
+  }
+const {x,z}=r.position,{width:w,depth:d}=r.dimensions;this.box('#d4d2bc',x,3,z,w+9,2,d+9);this.box('#6f7b75',x,4.1,z,w,.3,d);
 
  const axis=r.axis??(w<100?'z':'x');
  const length=axis==='z'?d:w;
@@ -78,7 +114,7 @@ export class CityRenderer {
  }
  }
  for(const b of s.bridges){const z=b.position.z,d=b.dimensions.depth;for(const dz of [-d/2-2,d/2+2]){this.box('#e6dfc8',0,7,z+dz,152,3,2);for(const x of [-48,48])this.box('#b9baa6',x,2,z+dz,5,8,5);}}
- for(const p of s.parks){const {x,z}=p.position,{width:w,depth:d}=p.dimensions;this.box('#97b67f',x,3,z,w+5,1,d+5);this.box('#ded5b6',x,4,z,w,.5,7);this.box('#ded5b6',x,4,z,7,.5,d);if(x<0){
+ for(const p of s.parks){const {x,z}=p.position,{width:w,depth:d}=p.dimensions;this.box(p.visual.color,x,3,z,w+5,1,d+5);this.box('#ded5b6',x,4,z,w,.5,7);this.box('#ded5b6',x,4,z,7,.5,d);if(x<0){
  this.part('cylinder','#d5d7c3',
   x,4.5,z,13,2,13);
  this.part('cylinder','#7fb4b2',
@@ -88,7 +124,7 @@ export class CityRenderer {
  this.box('#c3b59a',x,4.8,z,8,.2,8);
  }}
  // Gentle landscaped relief is limited to the outer boundary, away from plots.
- for(const x of [-580,580])for(const z of [-400,-100,200,420])this.part('sphere','#a7bd8d',x,0,z,20,9,65);
+ for(const x of [-size/2+20,size/2-20])for(const z of [-400,-100,200,420])this.part('sphere','#a7bd8d',x,0,z,20,9,65);
 
  // Additional park furniture and public spaces.
  for(const p of parkDetails(s)){
@@ -100,7 +136,58 @@ export class CityRenderer {
  for(const b of s.buildings)this.building(b);
  for(const t of s.trees){const {x,z}=t.position,h=t.dimensions.height,w=t.dimensions.width;this.part('cylinder','#8b8164',x,6,z,1.5,8,1.5);this.part('sphere',t.visual.color,x,h*.65+5,z,w,h*.48,w);}
  }
- building(b){const {x,z}=b.position,{width:w,depth:d,height:h}=b.dimensions,id=b.id,y=4;
+ building(b){
+
+  const angle=b.orientation||0;
+
+  const quarter=Math.round(
+   angle/(Math.PI/2)
+  );
+
+  const local={
+
+   ...b,
+
+   dimensions:{
+    ...b.dimensions
+   }
+  };
+
+  if(Math.abs(quarter)%2){
+
+   const d=local.dimensions;
+
+   [d.width,d.depth]=[d.depth,d.width];
+  }
+
+  this.buildingTransform={
+
+   x:b.position.x,
+
+   z:b.position.z,
+
+   angle
+  };
+
+  try{
+
+   this.buildLocalBuilding(local);
+
+  }finally{
+
+   this.buildingTransform=null;
+  }
+ }
+
+ buildLocalBuilding(b){
+
+  if(Object.hasOwn(ASSETS,b.type)){
+
+   renderAsset(this,b);
+
+   return;
+  }
+const {x,z}=b.position,{width:w,depth:d,height:h}=b.dimensions,id=b.id,y=4;
  this.box('#c9c7ad',x,3,z,w+7,1,d+7,id);
  const tiers=buildingMassing(b);
  const top=tiers[tiers.length-1];
@@ -164,6 +251,127 @@ export class CityRenderer {
  if(b.type==='school')this.box('#ceab60',x,y+h+2,z,w*.7,2,d*.65,id);
  if(b.type==='civic'){for(let dx=-w/2+3;dx<w/2;dx+=6)this.part('cylinder','#f5ecd9',x+dx,12,z+d/2+2,1.5,16,1.5,id);this.box('#e8dfca',x,21,z+d/2+2,w+3,3,6,id);}
  }
+
+ drawPathRoad(road){
+
+  const {points,width,bridge}=road.path;
+
+  for(let i=1;i<points.length;i++){
+
+   const a=points[i-1];
+
+   const b=points[i];
+
+   const dx=b[0]-a[0];
+
+   const dz=b[1]-a[1];
+
+   const length=Math.hypot(dx,dz);
+
+   const angle=Math.atan2(dx,dz);
+
+   const x=(a[0]+b[0])/2;
+
+   const z=(a[1]+b[1])/2;
+
+   // Each segment overlaps slightly
+   // to close gaps along curved roads.
+
+   const segmentLength=length+width*.3;
+
+   this.part(
+
+    'box','#d4d2bc',
+
+    x,3.6,z,
+
+    width+6,1.8,segmentLength,
+
+    road.id,angle
+   );
+
+   this.part(
+
+    'box',
+
+    road.visual.color||'#697671',
+
+    x,4.8,z,
+
+    width,.5,segmentLength,
+
+    road.id,angle
+   );
+
+   // Centre line along each segment.
+
+   this.part(
+
+    'box','#e0ddc3',
+
+    x,5.1,z,
+
+    .6,.1,Math.min(length*.55,8),
+
+    road.id,angle
+   );
+
+   if(bridge&&Math.abs(x)<80){
+
+    const nx=Math.cos(angle);
+
+    const nz=-Math.sin(angle);
+
+    for(const side of [-1,1]){
+
+     const offset=side*(width/2+1);
+
+     this.part(
+
+      'box','#e6dfc8',
+
+      x+nx*offset,7,z+nz*offset,
+
+      1.2,3,segmentLength,
+
+      road.id,angle
+     );
+    }
+
+    if(i%3===0){
+
+     this.box(
+
+      '#b9baa6',
+
+      x,1.7,z,
+
+      4,6,4,
+
+      road.id
+     );
+    }
+   }
+
+   // Fill joins between segments.
+
+   if(i<points.length-1){
+
+    this.part(
+
+     'cylinder','#697671',
+
+     b[0],4.8,b[1],
+
+     width/2,.5,width/2,
+
+     road.id
+    );
+   }
+  }
+ }
+
+
  flush(){const dummy=new THREE.Object3D();for(const batch of this.batches.values()){const material=new THREE.MeshStandardMaterial({color:batch.color,roughness:.85,side:['roof','front','side'].includes(batch.shape)?THREE.DoubleSide:THREE.FrontSide});
  material.userData.nightGlow=
   ['front','side'].includes(batch.shape)

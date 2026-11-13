@@ -22,7 +22,12 @@ export class SelectionManager {
       if (this.pointers.size > 1) this.cancelled = true;
       else {
         this.start = { x: event.clientX, y: event.clientY };
-        this.cancelled = event.button !== 0;
+        this.cancelled =
+          event.button !== 0 ||
+          event.shiftKey ||
+          event.ctrlKey ||
+          event.metaKey ||
+          event.altKey;
       }
     };
     this.move = event => {

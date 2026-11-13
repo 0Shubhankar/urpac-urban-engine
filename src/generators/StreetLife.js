@@ -16,6 +16,8 @@ export function streetLamps(s){
 
  for(const r of s.roads){
 
+  if(r.path)continue;
+
   const v=axis(r)==='z';
 
   const len=v

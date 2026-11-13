@@ -1,3 +1,10 @@
+import {
+ attachReleaseAPI
+} from './core/EditorAPI.js';
+import {attachCityManagement}
+ from './interaction/CityManagement.js';
+import {attachConstruction}
+ from './interaction/ConstructionEditor.js';
 import './styles/main.css';
 import defaultConfig from '../scenarios/default-city.json';
 const config=defaultConfig;
@@ -13,7 +20,7 @@ const modeButton=document.querySelector('#day-night');
 
 let nightMode=
  new URLSearchParams(location.search)
-  .get('mode')==='night';
+  .get('mode')!=='day';
 
 function applyDayNight(){
 
@@ -67,6 +74,14 @@ qualityControl.onchange=()=>{
  engine.invalidate();
 };
 
+activityControl.onchange();
+
+qualityControl.onchange();
+
+attachConstruction(engine);
+
+attachCityManagement(engine);
+attachReleaseAPI(engine);
 document.querySelector('#building-count').textContent=`${engine.state.buildings.length} buildings`;
 document.querySelector('#district-count').textContent=`${new Set([...engine.state.buildings,...engine.state.parks].map(o=>o.district)).size} districts`;
 const top=document.querySelector('#top');document.querySelector('#reset').onclick=()=>{engine.camera.reset();top.setAttribute('aria-pressed','false');};top.onclick=()=>{engine.camera.toggleTop();top.setAttribute('aria-pressed',String(engine.camera.top));};
