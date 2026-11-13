@@ -27,3 +27,6 @@ RenderScheduler coalesces invalidations into a single pending animation callback
 ## Extension points
 
 Future research modules should consume snapshots or explicit state APIs from `modules/`. Simulation mechanisms belong in `simulation/`, currently empty. Neither may require mesh access. A future persistence format can serialize state; save/load, construction, vehicles and research mechanisms are explicitly out of scope. Empty folders are retained with .gitkeep, and `tools/` was added only for portable packaging.
+
+### Configured layouts (U0.2-dev)
+`BlockLayout.createBlocks` derives buildable rectangles between adjacent roads on each bank. Optional `layout.districtGrid` is indexed by buildable column then row; `layout.parks` lists zero-based column/row pairs. Road axes must be ordered, within ±540 m, spaced at least 155 m and vertical roads must clear ±145 m. `BuildingGenerator` uses these rectangles when `layout` is present; otherwise legacy Riverbend generation is retained. See `scenarios/westhaven.json` for a working example. The renderer uses park dimensions from state. This remains a constrained orthogonal layout, not a general street-network generator.

@@ -42,3 +42,6 @@ Based on the newest working source in UUE_Current_Source.zip, not the older nest
 - Automated regression suite: see PERFORMANCE_REVIEW.md for exact results.
 - Offline dependency install completed from the supplied cache, but npm run build fails because @rollup/rollup-linux-x64-gnu is missing. Browser navigation was denied by environment policy; no browser FPS, GPU memory, interaction or physical phone acceptance result is claimed for this candidate.
 - U0.1 remains unaccepted. Run the local procedure in PERFORMANCE_REVIEW.md before U0.2.
+
+### U0.2 development increment 1
+Westhaven is an alternate rectangular grid with configurable street coordinates, district grid and park block indices. Fixed 1200 m boundary and straight central 110 m river remain. Config validation constrains the grid; irregular streets, curved rivers and expanded roof/facade types are not implemented. Riverbend remains the default. Scenario selection uses `?city=westhaven` and preserves diagnostics query parameters. 16 Node tests pass, including spatial checks across 30 seeds per scenario. Production build attempted but blocked by missing Linux Rollup binary; visual/mobile/FPS acceptance pending. No deployment attempted. Keep U0.1 main intact pending review.

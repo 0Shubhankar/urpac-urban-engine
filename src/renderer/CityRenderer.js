@@ -21,7 +21,7 @@ export class CityRenderer {
  for(const r of s.roads){const {x,z}=r.position,{width:w,depth:d}=r.dimensions;this.box('#d4d2bc',x,3,z,w+9,2,d+9);this.box('#6f7b75',x,4.1,z,w,.3,d);
  if(w<100){for(let k=-520;k<540;k+=25)if(!s.roads.some(q=>q.dimensions.width>100&&Math.abs(q.position.z-k)<20))this.box('#d8d7ba',x,4.4,k,1,.1,10);}else{for(let k=-520;k<540;k+=25)if(!s.roads.some(q=>q.dimensions.width<100&&Math.abs(q.position.x-k)<20))this.box('#d8d7ba',k,4.4,z,10,.1,1);}}
  for(const b of s.bridges){const z=b.position.z,d=b.dimensions.depth;for(const dz of [-d/2-2,d/2+2]){this.box('#e6dfc8',0,7,z+dz,152,3,2);for(const x of [-48,48])this.box('#b9baa6',x,2,z+dz,5,8,5);}}
- for(const p of s.parks){const {x,z}=p.position;this.box('#97b67f',x,3,z,145,1,145);this.box('#ded5b6',x,4,z,140,.5,7);this.box('#ded5b6',x,4,z,7,.5,140);this.part('cylinder','#d5d7c3',x,4.5,z,13,2,13);this.part('cylinder','#7fb4b2',x,5.7,z,10,.5,10);}
+ for(const p of s.parks){const {x,z}=p.position,{width:w,depth:d}=p.dimensions;this.box('#97b67f',x,3,z,w+5,1,d+5);this.box('#ded5b6',x,4,z,w,.5,7);this.box('#ded5b6',x,4,z,7,.5,d);this.part('cylinder','#d5d7c3',x,4.5,z,13,2,13);this.part('cylinder','#7fb4b2',x,5.7,z,10,.5,10);}
  // Gentle landscaped relief is limited to the outer boundary, away from plots.
  for(const x of [-580,580])for(const z of [-400,-100,200,420])this.part('sphere','#a7bd8d',x,0,z,20,9,65);
  for(const b of s.buildings)this.building(b);

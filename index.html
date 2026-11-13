@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#e9eee7"><title>URPAC Urban Engine · U0.1</title></head><body>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#e9eee7"><title>URPAC Urban Engine · U0.2-dev</title></head><body>
 <main id="viewport" aria-label="Interactive miniature city"></main>
-<header><div class="brandmark">U</div><div><strong>URPAC <span>URBAN ENGINE</span></strong><small>A city of possibilities.</small></div><b class="version">U0.1</b></header>
-<section class="location"><span class="eyebrow">THE FIRST SCENARIO</span><h1>Riverbend</h1><p>A miniature city, an open canvas.</p><div class="stats"><span id="building-count">— buildings</span><span>1.44 km²</span><span>6 districts</span></div></section>
-<nav aria-label="City view controls"><button id="reset" title="Reset camera">↺ <span>Reset view</span></button><button id="top" aria-pressed="false">▦ <span>Top-down</span></button><button id="fullscreen">⛶ <span>Fullscreen</span></button></nav>
+<header><div class="brandmark">U</div><div><strong>URPAC <span>URBAN ENGINE</span></strong><small>A city of possibilities.</small></div><b class="version">U0.2-dev</b></header>
+<section class="location"><span class="eyebrow">CITY SCENARIO</span><h1>Riverbend</h1><p>A miniature city, an open canvas.</p><div class="stats"><span id="building-count">— buildings</span><span>1.44 km²</span><span id="district-count">6 districts</span></div></section>
+<nav aria-label="City view controls"><select id="scenario" aria-label="City scenario"><option value="riverbend">Riverbend</option><option value="westhaven">Westhaven</option></select><button id="reset" title="Reset camera">↺ <span>Reset view</span></button><button id="top" aria-pressed="false">▦ <span>Top-down</span></button><button id="fullscreen">⛶ <span>Fullscreen</span></button></nav>
 <aside id="selection" hidden aria-live="polite"></aside>
-<footer><div><span class="status-dot"></span> PROCEDURAL CITY <span class="divider">/</span> SEED 4201</div><p>Drag to orbit · Scroll to zoom · Right-drag to pan · Click a building to explore</p><span class="north">N ↑</span></footer>
+<footer><div><span class="status-dot"></span> PROCEDURAL CITY <span class="divider">/</span> <span id="seed">SEED 4201</span></div><p>Drag to orbit · Scroll to zoom · Right-drag to pan · Click a building to explore</p><span class="north">N ↑</span></footer>
 <div id="error" role="alert" hidden></div><script type="module" src="/src/main.js"></script></body></html>

@@ -5,9 +5,11 @@ import {generateRoads} from '../generators/RoadGenerator.js';
 import {generateBuildings} from '../generators/BuildingGenerator.js';
 import {generateVegetation} from '../generators/VegetationGenerator.js';
 export function createCityState(config) {
- if(!Number.isInteger(config.seed)||config.size!==1200||config.river.centerX!==0||config.river.width!==110) throw new Error('U0.1 supports the documented 1200 m Riverbend layout and an integer seed.');
+ if(!Number.isInteger(config.seed)||config.size!==1200||config.river.centerX!==0||config.river.width!==110) throw new Error('Current engine requires a 1200 m boundary, straight 110 m river and integer seed.');
  const random=new SeededRandom(config.seed), {buildings,parks}=generateBuildings(config,random);
  const roads=generateRoads(config);
  const bridges=config.rowCoordinates.map(z=>({id:`bridge-${z}`,type:'bridge',district:'Citywide',position:{x:0,y:1,z},dimensions:{width:150,depth:z===0?24:16,height:2},orientation:0,visual:{color:'#c7c6ae'}}));
- return {version:'U0.1',name:config.name,seed:config.seed,boundary:config.size,terrain:generateTerrain(config),water:generateWater(config),roads,bridges,buildings,parks,trees:generateVegetation(config,random,parks)};
+ return {version:cVersion(config),name:config.name,seed:config.seed,boundary:config.size,terrain:generateTerrain(config),water:generateWater(config),roads,bridges,buildings,parks,trees:generateVegetation(config,random,parks)};
 }
+
+function cVersion(config){return config.layout?'U0.2-dev':'U0.1';}

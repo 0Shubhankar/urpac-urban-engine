@@ -13,3 +13,8 @@ Preserved the city and original dependency versions. Removed per-update pan-clam
 
 ### U0.1 startup hotfix
 Preserve native animation frame receiver; report actual startup error instead of assuming WebGL failure. Added regression test. Browser verification pending.
+
+## U0.2-dev — configurable grid prototype
+- Add Westhaven and data-driven block/district/park generation while preserving Riverbend's legacy path.
+- Add URL-based scenario selector, dynamic seed/district labels and park rendering dimensions.
+- Four new layout tests; all 16 tests passed in Node 22. Browser and production build not verified in this environment (missing native Rollup dependency).
