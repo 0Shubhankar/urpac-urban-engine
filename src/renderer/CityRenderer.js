@@ -1,3 +1,5 @@
+import {buildingMassing}
+ from '../generators/BuildingMassing.js';
 import * as THREE from 'three';
 import {addLighting} from './Lighting.js';
 // All static details are grouped by geometry/material into instanced batches.
@@ -51,11 +53,47 @@ export class CityRenderer {
  for(const t of s.trees){const {x,z}=t.position,h=t.dimensions.height,w=t.dimensions.width;this.part('cylinder','#8b8164',x,6,z,1.5,8,1.5);this.part('sphere',t.visual.color,x,h*.65+5,z,w,h*.48,w);}
  }
  building(b){const {x,z}=b.position,{width:w,depth:d,height:h}=b.dimensions,id=b.id,y=4;
- this.box('#c9c7ad',x,3,z,w+7,1,d+7,id);this.box(b.visual.color,x,y+h/2,z,w,h,d,id);
+ this.box('#c9c7ad',x,3,z,w+7,1,d+7,id);
+ const tiers=buildingMassing(b);
+ const top=tiers[tiers.length-1];
+
+ for(const t of tiers){
+  this.box(
+   b.visual.color,
+   x,y+(t.bottom+t.top)/2,z,
+   t.width,t.top-t.bottom,t.depth,id
+  );
+ }
  if(b.type==='house') {this.part('roof',b.visual.roof,x,y+h,z,w+4,9,d+4,id);this.box('#eee2c9',x+w*.25,y+h+4,z,3,9,3,id);}
- else{this.box('#f1ead8',x,y+h,z,w+2,1.6,d+2,id);this.box(b.visual.roof,x,y+h+1,z,w-3,1,d-3,id);this.box('#b6b5a4',x+3,y+h+3,z,8,4,7,id);}
+ else{
+ this.box('#f1ead8',x,y+h,z,
+  top.width+2,1.6,top.depth+2,id);
+ this.box(b.visual.roof,x,y+h+1,z,
+  top.width-3,1,top.depth-3,id);
+ this.box('#b6b5a4',x+3,y+h+3,z,8,4,7,id);
+ }
  const glass=b.type==='office'?'#526e70':'#687d79';
- for(let yy=9;yy<h+1;yy+=b.type==='office'?9:8){for(const zz of [-1,1])for(let xx=-w/2+5;xx<w/2-2;xx+=7)this.part('front',glass,x+xx,yy,z+zz*(d/2+.15),3.7,3.8,1,id);for(const xx of [-1,1])for(let zz=-d/2+5;zz<d/2-2;zz+=8)this.part('side',glass,x+xx*(w/2+.15),yy,z+zz,1,3.8,4,id);}
+
+ for(const t of tiers){
+  const tw=t.width,td=t.depth;
+
+  for(let yy=y+t.bottom+5;
+      yy+2<=y+t.top;
+      yy+=b.type==='office'?9:8){
+
+   for(const zz of [-1,1])
+    for(let xx=-tw/2+5;xx<tw/2-2;xx+=7)
+     this.part('front',glass,
+      x+xx,yy,z+zz*(td/2+.15),
+      3.7,3.8,1,id);
+
+   for(const xx of [-1,1])
+    for(let zz=-td/2+5;zz<td/2-2;zz+=8)
+     this.part('side',glass,
+      x+xx*(tw/2+.15),yy,z+zz,
+      1,3.8,4,id);
+  }
+ }
  this.box('#536960',x,7,z+d/2+.3,4,6,.6,id);
  if(b.type==='commercial')this.box('#b47c55',x,9,z+d/2+2,w,2,5,id);
  if(b.type==='hospital'){this.box('#b65d4c',x,y+h+2,z,12,1,3,id);this.box('#b65d4c',x,y+h+2,z,3,1,12,id);}
