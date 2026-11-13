@@ -1,0 +1,1 @@
+export function generateWater(config) { return {id:'river',type:'river',district:'Riverside Park',position:{x:config.river.centerX,y:0,z:0},dimensions:{width:config.river.width,depth:config.size,height:1},orientation:0,visual:{color:'#68a9ad'}}; }

@@ -1,0 +1,1 @@
+export function generateTerrain(config) { return {id:'terrain',type:'terrain',district:'Citywide',position:{x:0,y:-8,z:0},dimensions:{width:config.size,depth:config.size,height:16},orientation:0,visual:{color:'#abbc91'}}; }
