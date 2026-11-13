@@ -41,7 +41,15 @@ export class CityRenderer {
  }
  flush(){const dummy=new THREE.Object3D();for(const batch of this.batches.values()){const material=new THREE.MeshStandardMaterial({color:batch.color,roughness:.85,side:['roof','front','side'].includes(batch.shape)?THREE.DoubleSide:THREE.FrontSide});const mesh=new THREE.InstancedMesh(this.geometries[batch.shape],material,batch.items.length);mesh.userData.ids=[];batch.items.forEach((p,i)=>{dummy.position.set(p.x,p.y,p.z);dummy.scale.set(p.w,p.h,p.d);dummy.rotation.set(0,p.rotation,0);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);mesh.userData.ids[i]=p.id;});mesh.castShadow=!['front','side'].includes(batch.shape);mesh.receiveShadow=true;mesh.computeBoundingSphere();this.scene.add(mesh);if(mesh.userData.ids.some(Boolean))this.pickables.push(mesh);}this.batches.clear();}
  highlight(building){this.dirty=true;this.onInvalidate?.();if(this.outline){this.scene.remove(this.outline);this.outline.geometry.dispose();this.outline.material.dispose();this.outline=null;}if(!building)return;const {width:w,depth:d,height:h}=building.dimensions;const geo=new THREE.BoxGeometry(w+10,h+12,d+10);this.outline=new THREE.LineSegments(new THREE.EdgesGeometry(geo),new THREE.LineBasicMaterial({color:'#e49b42'}));geo.dispose();this.outline.position.set(building.position.x,4+h/2,building.position.z);this.scene.add(this.outline);}
- resize(container){this.dirty=true;this.onInvalidate?.();const {width,height}=container.getBoundingClientRect();this.camera.aspect=width/height;this.camera.updateProjectionMatrix();this.renderer.setSize(width,height);}
+ resize(container){
+ const rect=container.getBoundingClientRect();
+ const width=Math.floor(rect.width),height=Math.floor(rect.height);
+ if(width<=0||height<=0)return;
+ if(width===this.viewportWidth&&height===this.viewportHeight)return;
+ this.viewportWidth=width;this.viewportHeight=height;
+ this.camera.aspect=width/height;this.camera.updateProjectionMatrix();this.renderer.setSize(width,height);
+ this.dirty=true;this.onInvalidate?.();
+ }
  render(){this.renderer.render(this.scene,this.camera);this.dirty=false;}
  dispose(){this.observer.disconnect();this.highlight(null);this.scene.traverse(o=>{if(o.isMesh){o.material.dispose();if(o.isInstancedMesh)o.dispose();}});Object.values(this.geometries).forEach(g=>g.dispose());this.renderer.dispose();}
 }

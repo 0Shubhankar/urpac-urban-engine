@@ -27,7 +27,7 @@ export class CityEngine {
     this.view.onInvalidate = this.invalidate;
     this.camera.controls.addEventListener('change', this.invalidate);
     this.visibility = () => {
-      if (document.hidden) this.scheduler.suspend();
+      if (document.hidden) { previousTime = null; this.scheduler.suspend(); }
       else this.invalidate();
     };
     document.addEventListener('visibilitychange', this.visibility);

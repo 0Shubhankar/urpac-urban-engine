@@ -2,7 +2,7 @@
 
 ## Data flow and responsibilities
 
-`main.js` loads scenario JSON and creates CityEngine. CityEngine calls pure `createCityState`, creates CityRenderer, CameraController and SelectionManager, then owns the animation loop and cleanup.
+`main.js` loads scenario JSON and creates CityEngine. CityEngine calls pure `createCityState`, creates CityRenderer, CameraController and SelectionManager, then owns the demand-driven RenderScheduler and cleanup.
 
 CityState contains name, seed, boundary, terrain, water, roads, bridges, buildings, parks and trees. Every physical object carries id, type, district, position, dimensions, orientation and visual configuration. All values are plain JSON data; no mesh references. `SeededRandom` uses a deterministic 32-bit PRNG. Generation sequence is stable and covered by equality tests.
 
@@ -18,11 +18,11 @@ Only the supplied road coordinates, 1200 m boundary and centred 110 m river are 
 
 ## Rendering
 
-CityRenderer translates metadata into shared boxes, a triangular-prism gable roof, low-poly foliage, cylinders and instanced facade details. Batches are keyed by geometry and colour. Instance-to-building ID arrays support selection without inserting renderer objects into state. Materials are rough and texture-free; hemisphere and directional lighting, capped DPR (1) and cached 1024-pixel directional shadows keep the implementation modest.
+CityRenderer translates metadata into shared boxes, a triangular-prism gable roof, low-poly foliage, cylinders and instanced facade details. Batches are keyed by geometry and colour. Instance-to-building ID arrays retain batch metadata without inserting renderer objects into state. Materials are rough and texture-free; hemisphere and directional lighting, capped DPR (1) and cached 1024-pixel directional shadows keep the implementation modest.
 
-SelectionManager raycasts building batches, resolves the instance ID, and requests a separate wireframe selection box. Pointer movement exceeding 5 CSS pixels and multi-touch suppress click selection. CameraController wraps OrbitControls with damping, distance/elevation bounds, bounded pan, reset and overhead positioning. ResizeObserver updates canvas and projection. The UI uses safe textContent for selected metadata.
+SelectionManager intersects a ray with conservative logical building bounds, chooses the nearest hit, and requests a separate wireframe selection box. It does not raycast individual instanced windows. Pointer movement exceeding 5 CSS pixels and multi-touch suppress click selection. CameraController wraps OrbitControls with damping, distance/elevation bounds, bounded pan, reset and overhead positioning. ResizeObserver updates canvas and projection. The UI uses safe textContent for selected metadata.
 
-The frame loop only renders when OrbitControls changes, the viewport resizes, or selection changes. Static shadow maps are computed once. Facade windows use two-triangle planes instead of boxes. No continuous telemetry or network reporting exists.
+RenderScheduler coalesces invalidations into a single pending animation callback, continues during camera motion, and stops when motion settles. Hidden tabs cancel pending callbacks and reset frame timing. The renderer skips unchanged or zero-sized viewports. Static shadow maps are computed once. Facade windows use two-triangle planes instead of boxes. No continuous telemetry or network reporting exists.
 
 ## Extension points
 

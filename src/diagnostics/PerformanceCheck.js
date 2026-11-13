@@ -20,6 +20,7 @@ export function attachPerformanceCheck(engine) {
   } : { note: 'JS heap measurement unavailable in this browser.' };
   button.onclick = async () => {
     button.disabled = true;
+    delete output.dataset.complete;
     output.textContent = 'Running…';
     const originalRender = view.render;
     const originalUpdate = camera.update;
@@ -30,7 +31,7 @@ export function attachPerformanceCheck(engine) {
       renders++;
       if (recording) { times.push(start); submit.push(performance.now() - start); }
     };
-    camera.update = function () { callbacks++; return originalUpdate.call(this); };
+    camera.update = function (...args) { callbacks++; return originalUpdate.apply(this, args); };
     let hidden = document.hidden;
     const visibility = () => { if (document.hidden) hidden = true; };
     document.addEventListener('visibilitychange', visibility);
@@ -55,7 +56,7 @@ export function attachPerformanceCheck(engine) {
         date: new Date().toISOString(),
         viewport: { width: innerWidth, height: innerHeight, pixelRatio: view.renderer.getPixelRatio() },
         webglRenderer: debug ? gl.getParameter(debug.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER),
-        validForegroundSample: !hidden,
+        validForegroundSample: !hidden && times.length >= 2,
         activeOrbit: { durationMs: round(elapsed), frames: times.length, fps: round(times.length * 1000 / elapsed), p95FrameIntervalMs: round(intervals[Math.floor(intervals.length * .95)] || 0), meanCpuSubmitMs: round(submit.reduce((a,b)=>a+b,0) / Math.max(submit.length,1)) },
         idle1500ms: { callbacks: callbacks-before.callbacks, renders: renders-before.renders },
         scene: { drawCalls: view.renderer.info.render.calls, triangles: view.renderer.info.render.triangles, geometries: view.renderer.info.memory.geometries, textures: view.renderer.info.memory.textures },

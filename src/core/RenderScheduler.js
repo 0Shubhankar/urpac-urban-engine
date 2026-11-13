@@ -1,6 +1,7 @@
 /** Coalesces invalidations and stops requesting frames when damping has settled. */
 export class RenderScheduler {
-  constructor(step, request = requestAnimationFrame, cancel = cancelAnimationFrame) {
+  constructor(step, request = callback => globalThis.requestAnimationFrame(callback),
+              cancel = id => globalThis.cancelAnimationFrame(id)) {
     this.step = step;
     this.request = request;
     this.cancel = cancel;

@@ -36,3 +36,27 @@ test('suspend and disposal cancel frames; disposed engine cannot resume', () => 
   h.scheduler.dispose(); h.scheduler.invalidate();
   assert.equal(h.queue.size, 0);
 });
+
+// Native browser methods require their global receiver.
+test('default animation functions retain their global receiver', () => {
+  const oldRequest = globalThis.requestAnimationFrame;
+  const oldCancel = globalThis.cancelAnimationFrame;
+  try {
+    globalThis.requestAnimationFrame = function(callback) {
+      assert.equal(this, globalThis);
+      return 42;
+    };
+    globalThis.cancelAnimationFrame = function(id) {
+      assert.equal(this, globalThis);
+      assert.equal(id, 42);
+    };
+    const scheduler = new RenderScheduler(() => false);
+    scheduler.invalidate();
+    scheduler.dispose();
+  } finally {
+    if (oldRequest === undefined) delete globalThis.requestAnimationFrame;
+    else globalThis.requestAnimationFrame = oldRequest;
+    if (oldCancel === undefined) delete globalThis.cancelAnimationFrame;
+    else globalThis.cancelAnimationFrame = oldCancel;
+  }
+});

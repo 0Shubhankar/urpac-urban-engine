@@ -30,9 +30,11 @@ export class SelectionManager {
     };
     this.up = event => {
       this.pointers.delete(event.pointerId);
-      if (event.button !== 0 || this.cancelled || !this.start) return;
-      this.start = null;
+      const start = this.start;
+      if (this.pointers.size === 0) this.start = null;
+      if (event.button !== 0 || this.cancelled || !start) return;
       const rect = canvas.getBoundingClientRect();
+      if (rect.width <= 0 || rect.height <= 0) return;
       view.camera.updateMatrixWorld();
       this.raycaster.setFromCamera(new THREE.Vector2(
         (event.clientX - rect.left) / rect.width * 2 - 1,

@@ -36,3 +36,7 @@ The river runs north–south. The small N indicator denotes the world north conv
 `scenarios/default-city.json` defines the seed and the supported Riverbend street layout. Changing the integer seed changes building dimensions, materials and vegetation deterministically. Arbitrary layout editing is not supported in U0.1; see ARCHITECTURE. Original code and procedural assets have no open-source license assigned. See LICENSE_NOTES for third-party notices.
 
 Architecture, roadmap, acceptance evidence and limitations are in `docs/`. Run `python3 tools/package-source.py` to recreate `UUE_v0.1_Source.zip` without dependencies, caches or machine configuration.
+
+## GitHub deployment
+
+The GitHub Actions workflow runs `npm ci`, `npm test`, and `npm run build` on pull requests to main and pushes to main. Successful main builds deploy `dist/` to GitHub Pages. Enable Settings → Pages → Source → GitHub Actions before the initial deployment. Vite already uses a relative base (`./`) for project-site hosting. The workflow has not yet been executed on GitHub.

@@ -30,3 +30,15 @@ This is one illustrative orthogonal Riverbend scenario, not a general procedural
 ## Recommended next work
 
 First benchmark final navigation in a normal hardware-accelerated desktop browser and on a physical phone, then check touch/fullscreen and right-drag pan. Profile remaining lag before adding geometry. Only under a separate U0.2 assignment expand configurable block/district allocation and visual variety. Keep future Project 42 research logic outside the core renderer.
+
+
+## U0.1 performance review candidate 1 — ChatGPT continuation
+
+Based on the newest working source in UUE_Current_Source.zip, not the older nested release. Original source archive preserved. No city generator, visual styling, research module or dependency version changes.
+
+- Camera pan clamp uses scalar calculations and reports corrections; test verifies target limits and preservation of camera offset.
+- Visibility changes reset elapsed frame timing; diagnostics forward camera delta, clear previous completion and reject empty foreground samples.
+- Resize skips unchanged and zero-sized viewports. Selection clears completed pointer gesture state and guards empty canvas bounds. Page lifecycle preserves the engine for back-forward cache restoration.
+- Automated regression suite: see PERFORMANCE_REVIEW.md for exact results.
+- Offline dependency install completed from the supplied cache, but npm run build fails because @rollup/rollup-linux-x64-gnu is missing. Browser navigation was denied by environment policy; no browser FPS, GPU memory, interaction or physical phone acceptance result is claimed for this candidate.
+- U0.1 remains unaccepted. Run the local procedure in PERFORMANCE_REVIEW.md before U0.2.

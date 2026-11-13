@@ -8,5 +8,6 @@ if(new URLSearchParams(location.search).has('diagnostics')) import('./diagnostic
 document.querySelector('#building-count').textContent=`${engine.state.buildings.length} buildings`;
 const top=document.querySelector('#top');document.querySelector('#reset').onclick=()=>{engine.camera.reset();top.setAttribute('aria-pressed','false');};top.onclick=()=>{engine.camera.toggleTop();top.setAttribute('aria-pressed',String(engine.camera.top));};
 const fullscreen=document.querySelector('#fullscreen');fullscreen.hidden=!document.fullscreenEnabled;fullscreen.onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{fullscreen.textContent='Fullscreen unavailable';}};
-window.addEventListener('pagehide',()=>engine.dispose(),{once:true});
-} catch(error){document.querySelector('#error').hidden=false;document.querySelector('#error').textContent=`Unable to start the city. A WebGL-capable browser is required. ${error.message}`;console.error(error);}
+window.addEventListener('pagehide',event=>{if(!event.persisted)engine.dispose();});
+window.addEventListener('pageshow',event=>{if(event.persisted)engine.invalidate();});
+} catch(error){document.querySelector('#error').hidden=false;document.querySelector('#error').textContent=`Unable to start the city: ${error.message}`;console.error(error);}
