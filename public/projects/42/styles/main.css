@@ -1,0 +1,31 @@
+
+*{box-sizing:border-box}
+body{
+ margin:0;
+ background:#192731;
+ color:#e4ece7;
+ font:14px system-ui,sans-serif;
+}
+header{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:10px;
+ padding:12px 18px;
+}
+button{
+ padding:8px 12px;
+ background:#36554b;
+ border:1px solid #6e9180;
+ border-radius:5px;
+ color:white;
+ cursor:pointer;
+}
+#status{
+ padding:0 18px 10px;
+ font-size:12px;
+}
+#engine{
+ height:calc(100dvh - 100px);
+ min-height:300px;
+}

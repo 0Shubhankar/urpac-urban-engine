@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport"
+ content="width=device-width,initial-scale=1">
+<title>UUE Project Starter</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ background:#192731;
+ color:#e4ece7;
+ font:14px system-ui,sans-serif;
+}
+header{
+ padding:14px 18px;
+ display:flex;
+ align-items:center;
+ flex-wrap:wrap;
+ gap:10px;
+}
+header strong{font-size:15px}
+button{
+ padding:9px 12px;
+ border:1px solid #688579;
+ background:#36554b;
+ color:white;
+ border-radius:5px;
+ cursor:pointer;
+}
+#engine{
+ height:calc(100dvh - 110px);
+ min-height:300px;
+}
+#status{
+ padding:0 18px 10px;
+ font-size:12px;
+}
+</style>
+</head>
+<body>
+
+<header>
+ <strong>UUE Project Starter</strong>
+ <button id="house" disabled>
+  Add house
+ </button>
+ <button id="office" disabled>
+  Attempt office
+ </button>
+ <button id="export" disabled>
+  Export city
+ </button>
+</header>
+
+<div id="status">Loading shared engine...</div>
+<div id="engine"></div>
+
+<script type="module" src="./project.js"></script>
+</body>
+</html>

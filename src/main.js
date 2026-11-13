@@ -1,4 +1,7 @@
 import {
+ attachProjectHost
+} from './core/ProjectHost.js';
+import {
  attachReleaseAPI
 } from './core/EditorAPI.js';
 import {attachCityManagement}
@@ -82,6 +85,7 @@ attachConstruction(engine);
 
 attachCityManagement(engine);
 attachReleaseAPI(engine);
+attachProjectHost(engine);
 document.querySelector('#building-count').textContent=`${engine.state.buildings.length} buildings`;
 document.querySelector('#district-count').textContent=`${new Set([...engine.state.buildings,...engine.state.parks].map(o=>o.district)).size} districts`;
 const top=document.querySelector('#top');document.querySelector('#reset').onclick=()=>{engine.camera.reset();top.setAttribute('aria-pressed','false');};top.onclick=()=>{engine.camera.toggleTop();top.setAttribute('aria-pressed',String(engine.camera.top));};

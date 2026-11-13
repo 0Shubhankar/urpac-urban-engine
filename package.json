@@ -1,6 +1,6 @@
 {
   "name": "urpac-urban-engine",
-  "version": "1.0.0-rc.1",
+  "version": "1.2.0-rc.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,7 +8,12 @@
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
     "test": "node --test",
-    "postbuild": "node tools/copy-licenses.js"
+    "postbuild": "node tools/copy-licenses.js",
+    "help": "node tools/uue-toolkit.mjs help",
+    "create-project": "node tools/uue-toolkit.mjs create",
+    "projects": "node tools/uue-toolkit.mjs list",
+    "release:freeze": "node tools/uue-toolkit.mjs freeze",
+    "release:verify": "node tools/uue-toolkit.mjs verify"
   },
   "dependencies": {
     "three": "0.170.0"

@@ -1,20 +1,35 @@
-# Changelog
+# URPAC Urban Engine — Changelog
 
-## U0.1 — 2026-11-13
+## 1.2.0-rc.1
 
-Initial Riverbend city: 132 original procedural buildings, six district categories, river, seven bridges, street hierarchy, two parks, vegetation and scale-model lighting. Added deterministic plain-data generation, instanced rendering, orbit/zoom/pan, reset, overhead view, selection, responsive UI and fullscreen capability detection. Added Node integrity/spatial tests, Vite static build, dependency lockfile, architecture and continuation documentation, and portable source packaging.
+- One-command project creation.
+- Central project registry.
+- Generic research session and event toolkit.
+- Frozen engine distributions and hash manifests.
+- Permanent command and operational documentation.
 
-Performance follow-up: render on demand, DPR capped at 1, cached 1024-pixel shadows, and planar instanced facade windows.
+## 1.1.0-rc.1
 
+- Shared project integration client.
+- Project-specific decision policies.
+- Independent project/session storage.
+- Scenario initialization and demonstration.
 
-### U0.1 performance review candidate 1
+## 1.0.0-rc.1
 
-Preserved the city and original dependency versions. Removed per-update pan-clamp allocations, explicitly report boundary corrections, reset elapsed time on visibility changes, skip duplicate/zero-size resize, clear selection gesture state, and preserve the engine across back-forward cache restoration. Corrected diagnostic camera delta forwarding and stale completion flag. Added camera, resize and selection regression tests. Final browser benchmarking and production build remain pending.
+- Consolidated editable city engine.
+- Reusable editor API.
+- City export/import and unified settings.
+- Night, High activity, Performance defaults.
 
-### U0.1 startup hotfix
-Preserve native animation frame receiver; report actual startup error instead of assuming WebGL failure. Added regression test. Browser verification pending.
+## Earlier development
 
-## U0.2-dev — configurable grid prototype
-- Add Westhaven and data-driven block/district/park generation while preserving Riverbend's legacy path.
-- Add URL-based scenario selector, dynamic seed/district labels and park rendering dimensions.
-- Four new layout tests; all 16 tests passed in Node 22. Browser and production build not verified in this environment (missing native Rollup dependency).
+- U0.1: Core 3D engine.
+- U0.2: Urban environment.
+- U0.3: Street life.
+- U0.4: Construction.
+- U0.5: City persistence.
+- U0.6: Universal object editing.
+- U0.7: Road networks.
+- U0.8: Landscape editing.
+- U0.9: Advanced spatial editing.

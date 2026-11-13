@@ -1,5 +1,5 @@
 
-export const ENGINE_VERSION='1.0.0-rc.1';
+export const ENGINE_VERSION='1.2.0-rc.1';
 
 const clone=o=>structuredClone(o);
 
@@ -168,7 +168,7 @@ export function attachReleaseAPI(engine){
  </small>
 
  <small class="editor-version">
-  UUE 1.0 RC
+  UUE 1.2 RC
  </small>`;
 
  panel.append(footer);

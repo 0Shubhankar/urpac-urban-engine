@@ -1,6 +1,6 @@
 # URPAC Urban Engine
 
-Version: 1.0.0-rc.1
+Version: 1.2.0-rc.1
 
 UUE is a reusable browser-based 3D urban
 editing environment built with Three.js.

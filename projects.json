@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "projects": [
+    {
+      "id": "demo",
+      "slug": "integration-demo",
+      "engineVersion": "1.2.0-rc.1",
+      "path": "public/projects/demo",
+      "status": "integration-testing"
+    },
+    {
+      "id": "42",
+      "slug": "municipal-finance",
+      "engineVersion": "1.2.0-rc.1",
+      "engineUrl": "../../",
+      "scenarioVersion": "1.0.0",
+      "researchVersion": "0.1.0",
+      "path": "public/projects/42",
+      "status": "development"
+    }
+  ]
+}

@@ -350,15 +350,17 @@ export function inventory(state){
 
 export class CityStorage{
 
- constructor(storage){
+ constructor(storage,key=STORAGE_KEY){
 
   this.storage=storage;
+
+  this.key=key;
  }
 
  read(){
 
   const raw=this.storage.getItem(
-   STORAGE_KEY
+   this.key
   );
 
   if(!raw)return {
@@ -377,7 +379,7 @@ export class CityStorage{
  write(data){
 
   this.storage.setItem(
-   STORAGE_KEY,
+   this.key,
    JSON.stringify(data)
   );
  }

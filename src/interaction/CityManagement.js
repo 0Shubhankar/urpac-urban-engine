@@ -1,3 +1,15 @@
+import {
+
+ projectIdentity,
+
+ projectStorageKey
+
+} from '../core/ProjectIdentity.js';
+
+import {
+ STORAGE_KEY
+} from '../core/CityPersistence.js';
+
 
 import {
  makeSave,
@@ -20,8 +32,19 @@ export function attachCityManagement(engine){
  try{
 
   storage=new CityStorage(
-   window.localStorage
+
+   window.localStorage,
+
+   projectStorageKey(
+
+    projectIdentity(location.search),
+
+    STORAGE_KEY
+   )
   );
+
+  engine.projectHadSave=
+   !!storage.read().autosave;
 
   storage.read();
 
@@ -351,6 +374,11 @@ export function attachCityManagement(engine){
 
   const save=validateSave(raw,baseline);
 
+  const denied=engine.projectPolicy
+   ?.authorizeRestore(save);
+
+  if(denied)throw Error(denied);
+
   const previous=model.snapshot();
 
   const previousHistory=history;
@@ -411,6 +439,8 @@ export function attachCityManagement(engine){
   }
 
   autosave();
+
+  engine.projectPolicy?.restored();
  }
 
  engine.saveSimulation=autosave;
