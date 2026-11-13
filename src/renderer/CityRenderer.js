@@ -1,3 +1,5 @@
+import {streetLamps}
+ from '../generators/StreetLife.js';
 import {parkDetails}
  from '../generators/ParkDetails.js';
 import {waterfrontParts}
@@ -34,6 +36,22 @@ export class CityRenderer {
    p.width,p.height,p.depth
   );
  }
+
+ // Roadside streetlights.
+ for(const l of streetLamps(s)){
+
+  this.box('#596863',
+   l.x,8,l.z,.65,8,.65);
+
+  this.box('#596863',
+   l.x+l.dx*1.5,12,l.z+l.dz*1.5,
+   l.dx?3.6:.65,.55,l.dz?3.6:.65);
+
+  this.box('#f0dfaf',
+   l.x+l.dx*3,11.7,l.z+l.dz*3,
+   1.5,.65,1.5);
+ }
+
  for(const r of s.roads){const {x,z}=r.position,{width:w,depth:d}=r.dimensions;this.box('#d4d2bc',x,3,z,w+9,2,d+9);this.box('#6f7b75',x,4.1,z,w,.3,d);
 
  const axis=r.axis??(w<100?'z':'x');

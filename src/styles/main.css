@@ -35,3 +35,32 @@
 [data-mode="night"] .north{
  color:#dce6f4;
 }
+
+/* U0.3 — Urban life controls */
+nav select{
+ font:inherit;
+ font-size:11px;
+ color:#3e5748;
+ padding:9px;
+ border:1px solid #cbd5c7;
+ border-radius:7px;
+ background:#f8faf2;
+ cursor:pointer;
+ max-width:135px;
+}
+
+[data-mode="night"] nav select{
+ background:#24344a;
+ color:#e2ebf7;
+ border-color:#495b73;
+}
+
+@media(max-width:850px){
+ nav{
+  flex-wrap:wrap;
+  max-width:95vw;
+ }
+ nav select{
+  max-width:115px;
+ }
+}

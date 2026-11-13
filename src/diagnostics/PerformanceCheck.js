@@ -32,6 +32,7 @@ export function attachPerformanceCheck(engine) {
       if (recording) { times.push(start); submit.push(performance.now() - start); }
     };
     camera.update = function (...args) { callbacks++; return originalUpdate.apply(this, args); };
+    const activityWasPaused=engine.activity.paused;
     let hidden = document.hidden;
     const visibility = () => { if (document.hidden) hidden = true; };
     document.addEventListener('visibilitychange', visibility);
@@ -46,6 +47,8 @@ export function attachPerformanceCheck(engine) {
       const elapsed = performance.now() - start;
       recording = false;
       camera.controls.autoRotate = false;
+      engine.activity.paused=true;
+      engine.invalidate();
       await wait(1500); // Let orbit damping settle before the idle sample.
       const before = { callbacks, renders };
       await wait(1500);
@@ -58,6 +61,8 @@ export function attachPerformanceCheck(engine) {
         webglRenderer: debug ? gl.getParameter(debug.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER),
         validForegroundSample: !hidden && times.length >= 2,
         activeOrbit: { durationMs: round(elapsed), frames: times.length, fps: round(times.length * 1000 / elapsed), p95FrameIntervalMs: round(intervals[Math.floor(intervals.length * .95)] || 0), meanCpuSubmitMs: round(submit.reduce((a,b)=>a+b,0) / Math.max(submit.length,1)) },
+        activityLevel: engine.activity.level,
+        idleActivityPaused: true,
         idle1500ms: { callbacks: callbacks-before.callbacks, renders: renders-before.renders },
         scene: { drawCalls: view.renderer.info.render.calls, triangles: view.renderer.info.render.triangles, geometries: view.renderer.info.memory.geometries, textures: view.renderer.info.memory.textures },
         heap: heap(),
@@ -72,6 +77,8 @@ export function attachPerformanceCheck(engine) {
       camera.update = originalUpdate;
       view.render = originalRender;
       document.removeEventListener('visibilitychange', visibility);
+      engine.activity.paused=activityWasPaused;
+      engine.invalidate();
       button.disabled = false;
     }
   };

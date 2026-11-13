@@ -18,6 +18,7 @@ let nightMode=
 function applyDayNight(){
 
  engine.view.setDayNight(nightMode);
+ engine.activity.setNight(nightMode);
 
  document.documentElement.dataset.mode=
   nightMode?'night':'day';
@@ -43,6 +44,28 @@ modeButton.onclick=()=>{
 };
 
 applyDayNight();
+
+
+const activityControl=
+ document.querySelector('#activity');
+
+activityControl.onchange=()=>{
+ engine.activity.setLevel(activityControl.value);
+ engine.invalidate();
+};
+
+const qualityControl=
+ document.querySelector('#quality');
+
+qualityControl.onchange=()=>{
+ engine.view.renderer.setPixelRatio(
+  Math.min(
+   window.devicePixelRatio||1,
+   Number(qualityControl.value)
+  )
+ );
+ engine.invalidate();
+};
 
 document.querySelector('#building-count').textContent=`${engine.state.buildings.length} buildings`;
 document.querySelector('#district-count').textContent=`${new Set([...engine.state.buildings,...engine.state.parks].map(o=>o.district)).size} districts`;

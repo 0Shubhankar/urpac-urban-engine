@@ -1,3 +1,5 @@
+import {UrbanActivity}
+ from '../renderer/UrbanActivity.js';
 import { createCityState } from './CityState.js';
 import { CityRenderer } from '../renderer/CityRenderer.js';
 import { CameraController } from '../renderer/CameraController.js';
@@ -10,15 +12,24 @@ export class CityEngine {
     this.view = new CityRenderer(container, this.state);
     this.camera = new CameraController(this.view.camera, this.view.renderer.domElement);
     this.selection = new SelectionManager(this.view, onSelect);
+    this.activity = new UrbanActivity(this.view);
     let previousTime = null;
     this.scheduler = new RenderScheduler(time => {
       if (document.hidden) { previousTime = null; return false; }
       const delta = previousTime === null ? 1 / 60 : Math.min((time - previousTime) / 1000, 0.1);
       previousTime = time;
       const changed = this.camera.update(delta);
-      if (changed || this.view.dirty) this.view.render();
-      if (!changed && !this.camera.controls.autoRotate) previousTime = null;
-      return changed || this.camera.controls.autoRotate;
+      const moving = this.activity.update(delta);
+
+      if (changed || moving || this.view.dirty)
+        this.view.render();
+
+      const active = changed || moving ||
+        this.camera.controls.autoRotate;
+
+      if (!active) previousTime = null;
+
+      return active;
     });
     this.invalidate = () => {
       this.view.dirty = true;
@@ -41,6 +52,7 @@ export class CityEngine {
     this.view.onInvalidate = null;
     this.selection.dispose();
     this.camera.dispose();
+    this.activity.dispose();
     this.view.dispose();
   }
 }
