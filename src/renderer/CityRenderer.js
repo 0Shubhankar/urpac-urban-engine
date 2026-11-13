@@ -1,3 +1,5 @@
+import {buildingDetails}
+ from '../generators/BuildingDetails.js';
 import {buildingMassing}
  from '../generators/BuildingMassing.js';
 import * as THREE from 'three';
@@ -56,6 +58,8 @@ export class CityRenderer {
  this.box('#c9c7ad',x,3,z,w+7,1,d+7,id);
  const tiers=buildingMassing(b);
  const top=tiers[tiers.length-1];
+ const details=buildingDetails(b,tiers);
+
 
  for(const t of tiers){
   this.box(
@@ -64,7 +68,13 @@ export class CityRenderer {
    t.width,t.top-t.bottom,t.depth,id
   );
  }
- if(b.type==='house') {this.part('roof',b.visual.roof,x,y+h,z,w+4,9,d+4,id);this.box('#eee2c9',x+w*.25,y+h+4,z,3,9,3,id);}
+ if(b.type==='house') {this.part(
+  'roof',b.visual.roof,x,y+h,z,
+  details.roofRotation?d+4:w+4,
+  details.roofHeight,
+  details.roofRotation?w+4:d+4,
+  id,details.roofRotation
+ );this.box('#eee2c9',x+w*.25,y+h+4,z,3,9,3,id);}
  else{
  this.box('#f1ead8',x,y+h,z,
   top.width+2,1.6,top.depth+2,id);
@@ -72,7 +82,8 @@ export class CityRenderer {
   top.width-3,1,top.depth-3,id);
  this.box('#b6b5a4',x+3,y+h+3,z,8,4,7,id);
  }
- const glass=b.type==='office'?'#526e70':'#687d79';
+ const glass=b.type==='office'
+  ?details.officeGlass:'#687d79';
 
  for(const t of tiers){
   const tw=t.width,td=t.depth;
@@ -85,14 +96,21 @@ export class CityRenderer {
     for(let xx=-tw/2+5;xx<tw/2-2;xx+=7)
      this.part('front',glass,
       x+xx,yy,z+zz*(td/2+.15),
-      3.7,3.8,1,id);
+      b.type==='office'?5.2:3.7,3.8,1,id);
 
    for(const xx of [-1,1])
     for(let zz=-td/2+5;zz<td/2-2;zz+=8)
      this.part('side',glass,
       x+xx*(tw/2+.15),yy,z+zz,
-      1,3.8,4,id);
+      1,3.8,b.type==='office'?5.2:4,id);
   }
+ }
+
+ for(const a of details.parts){
+  this.box(
+   a.color,x+a.x,y+a.y,z+a.z,
+   a.width,a.height,a.depth,id
+  );
  }
  this.box('#536960',x,7,z+d/2+.3,4,6,.6,id);
  if(b.type==='commercial')this.box('#b47c55',x,9,z+d/2+2,w,2,5,id);
