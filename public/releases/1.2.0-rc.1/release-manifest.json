@@ -1,0 +1,26 @@
+{
+  "version": "1.2.0-rc.1",
+  "sourceCommit": "4d34438da47185e77ce2af64ea487ee792c033a5",
+  "createdAt": "2026-11-13T17:57:52.670Z",
+  "files": {
+    "assets/index-BnRAX6m-.js": "256741127958cca0d6a37274c03d481009a328c6cb4da054e2e38eb729ff09f7",
+    "assets/index-DVG_OO0Z.css": "543cd68359f62b855157894b3cee78b0016fe62adb329f980bb860933714d5ce",
+    "assets/PerformanceCheck-ZvCn_iov.js": "1c063081f78f29280e2fcb67cac74fe0cf849e97ea6230d6b65bade32ff60947",
+    "index.html": "6fd928f094b1ac2d242b356c991269adb36b7c96e754e268a26f0ca47b2c4703",
+    "licenses/esbuild-LICENSE.md": "b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681",
+    "licenses/fdir-LICENSE": "9a39f2aadab11a3697edd668ff2d8ad885b649737b7ab4d3bf12b34e5ada0c86",
+    "licenses/fsevents-LICENSE": "2a8a5d6197bb97a018b8a190dd3ed853d750ca87c8e80c17aad41d6c6ff448e1",
+    "licenses/nanoid-LICENSE": "da4db1480d9beea3483a2eda5c53b22238d0827d57da162b48f122e04d2d9987",
+    "licenses/picocolors-LICENSE": "6582629e2979466878f6014313dcc2f3756c9616148682227ce3063dde310750",
+    "licenses/picomatch-LICENSE": "d0cd141b0c322fded5dfad1d4645bb2fedfc05b7321fe1009469638190d59ef9",
+    "licenses/postcss-LICENSE": "5be1f3465bba68a626777f984878814aaf35e7ef8e9fd314d469bcf887050fb8",
+    "licenses/rollup-LICENSE.md": "fa1bd040c5bdeefe65b3821cebf474f2733ce65df13089bd151dda1778e62fe8",
+    "licenses/source-map-js-LICENSE": "6cb0631f71c7749763fd3dd1d5bee52dd1070ec17f2edc1710079ad070bd2fbd",
+    "licenses/three-LICENSE": "4c40a1ef62450b857c3b2aaf294936304cd552d965fbcd9d32d4c5bcf4ba4454",
+    "licenses/tinyglobby-LICENSE": "22c68811e174cbbfb3813d4135918df4f540959c14d872e601d9abe83d3cde8f",
+    "licenses/types_estree-LICENSE": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+    "licenses/vite-LICENSE.md": "008938a3441801ca3960f8e3ccb4c0738e7996442a53063141d57d3769a7344d",
+    "project-client.js": "40a1989cf9ebf4d8aad90a334674051cc2bca3d893a96d9c0fd30118a218b381",
+    "research-toolkit.js": "c5802a578bdfcf218835439329e40836687ab3c51f1446d005e7a058ecb381c6"
+  }
+}

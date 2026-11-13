@@ -2,7 +2,7 @@
   "id": "42",
   "slug": "municipal-finance",
   "engineVersion": "1.2.0-rc.1",
-  "engineUrl": "../../",
+  "engineUrl": "../../releases/1.2.0-rc.1/",
   "scenarioVersion": "1.0.0",
   "researchVersion": "0.1.0"
 }
