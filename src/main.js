@@ -8,6 +8,42 @@ const panel=document.querySelector('#selection');
 try {
 const engine=new CityEngine(document.querySelector('#viewport'),config,b=>{panel.replaceChildren();panel.hidden=!b;if(!b)return;const label=document.createElement('span');label.className='eyebrow';label.textContent=b.district;const title=document.createElement('h2');title.textContent=b.type.charAt(0).toUpperCase()+b.type.slice(1);const detail=document.createElement('p');detail.textContent=`${b.id} · ${Math.round(b.dimensions.height)} m tall`;const dimensions=document.createElement('p');dimensions.textContent=`${Math.round(b.dimensions.width)} × ${Math.round(b.dimensions.depth)} m footprint`;panel.append(label,title,detail,dimensions);});
 if(new URLSearchParams(location.search).has('diagnostics')) import('./diagnostics/PerformanceCheck.js').then(({attachPerformanceCheck})=>attachPerformanceCheck(engine));
+
+const modeButton=document.querySelector('#day-night');
+
+let nightMode=
+ new URLSearchParams(location.search)
+  .get('mode')==='night';
+
+function applyDayNight(){
+
+ engine.view.setDayNight(nightMode);
+
+ document.documentElement.dataset.mode=
+  nightMode?'night':'day';
+
+ modeButton.setAttribute(
+  'aria-pressed',String(nightMode)
+ );
+
+ modeButton.replaceChildren(
+  document.createTextNode(nightMode?'☀ ':'☾ ')
+ );
+
+ const label=document.createElement('span');
+
+ label.textContent=nightMode?'Day':'Night';
+
+ modeButton.append(label);
+}
+
+modeButton.onclick=()=>{
+ nightMode=!nightMode;
+ applyDayNight();
+};
+
+applyDayNight();
+
 document.querySelector('#building-count').textContent=`${engine.state.buildings.length} buildings`;
 document.querySelector('#district-count').textContent=`${new Set([...engine.state.buildings,...engine.state.parks].map(o=>o.district)).size} districts`;
 const top=document.querySelector('#top');document.querySelector('#reset').onclick=()=>{engine.camera.reset();top.setAttribute('aria-pressed','false');};top.onclick=()=>{engine.camera.toggleTop();top.setAttribute('aria-pressed',String(engine.camera.top));};

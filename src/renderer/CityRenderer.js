@@ -1,16 +1,20 @@
+import {parkDetails}
+ from '../generators/ParkDetails.js';
+import {waterfrontParts}
+ from '../generators/Waterfront.js';
 import {buildingDetails}
  from '../generators/BuildingDetails.js';
 import {buildingMassing}
  from '../generators/BuildingMassing.js';
 import * as THREE from 'three';
-import {addLighting} from './Lighting.js';
+import {addLighting,setLightingMode} from './Lighting.js';
 // All static details are grouped by geometry/material into instanced batches.
 export class CityRenderer {
  constructor(container,state){
  this.state=state;this.scene=new THREE.Scene();this.scene.background=new THREE.Color('#e9eee7');
  this.camera=new THREE.PerspectiveCamera(38,1,2,6500);
  this.renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});this.renderer.setPixelRatio(Math.min(devicePixelRatio,1));this.renderer.shadowMap.enabled=true;this.renderer.shadowMap.autoUpdate=false;this.renderer.shadowMap.needsUpdate=true;this.renderer.shadowMap.type=THREE.PCFSoftShadowMap;this.renderer.outputColorSpace=THREE.SRGBColorSpace;this.renderer.toneMapping=THREE.ACESFilmicToneMapping;container.appendChild(this.renderer.domElement);
- this.geometries={front:new THREE.PlaneGeometry(1,1),side:new THREE.PlaneGeometry(1,1).rotateY(Math.PI/2),box:new THREE.BoxGeometry(1,1,1),cone:new THREE.ConeGeometry(1,1,7),sphere:new THREE.IcosahedronGeometry(1,1),cylinder:new THREE.CylinderGeometry(1,1,1,8)};const roof=new THREE.BufferGeometry();roof.setAttribute('position',new THREE.Float32BufferAttribute([-.5,0,-.5,.5,0,-.5,0,1,-.5, -.5,0,.5,0,1,.5,.5,0,.5, -.5,0,-.5,0,1,-.5,0,1,.5, -.5,0,-.5,0,1,.5,-.5,0,.5, .5,0,-.5,.5,0,.5,0,1,.5, .5,0,-.5,0,1,.5,0,1,-.5],3));roof.computeVertexNormals();this.geometries.roof=roof;this.batches=new Map();this.pickables=[];addLighting(this.scene);this.build();this.flush();
+ this.geometries={front:new THREE.PlaneGeometry(1,1),side:new THREE.PlaneGeometry(1,1).rotateY(Math.PI/2),box:new THREE.BoxGeometry(1,1,1),cone:new THREE.ConeGeometry(1,1,7),sphere:new THREE.IcosahedronGeometry(1,1),cylinder:new THREE.CylinderGeometry(1,1,1,8)};const roof=new THREE.BufferGeometry();roof.setAttribute('position',new THREE.Float32BufferAttribute([-.5,0,-.5,.5,0,-.5,0,1,-.5, -.5,0,.5,0,1,.5,.5,0,.5, -.5,0,-.5,0,1,-.5,0,1,.5, -.5,0,-.5,0,1,.5,-.5,0,.5, .5,0,-.5,.5,0,.5,0,1,.5, .5,0,-.5,0,1,.5,0,1,-.5],3));roof.computeVertexNormals();this.geometries.roof=roof;this.batches=new Map();this.pickables=[];this.lights=addLighting(this.scene);this.build();this.flush();
  this.observer=new ResizeObserver(()=>this.resize(container));this.observer.observe(container);this.resize(container);
  }
  part(shape,color,x,y,z,w,h,d,id=null,rotation=0){const key=`${shape}:${color}`;if(!this.batches.has(key))this.batches.set(key,{shape,color,items:[]});this.batches.get(key).items.push({x,y,z,w,h,d,id,rotation});}
@@ -22,6 +26,14 @@ export class CityRenderer {
  for(const x of [-59,59])this.box('#c6c7ac',x,4,0,8,5,1200);
  for(const x of [-74,74])this.box('#dbd7bf',x,3,0,20,2,1200);
  for(let z=-570;z<600;z+=52)this.box('#92c1bd',0,3.6,z,65,0.1,1.2);
+
+ // Procedural waterfront infrastructure.
+ for(const p of waterfrontParts(s)){
+  this.box(
+   p.color,p.x,p.y,p.z,
+   p.width,p.height,p.depth
+  );
+ }
  for(const r of s.roads){const {x,z}=r.position,{width:w,depth:d}=r.dimensions;this.box('#d4d2bc',x,3,z,w+9,2,d+9);this.box('#6f7b75',x,4.1,z,w,.3,d);
 
  const axis=r.axis??(w<100?'z':'x');
@@ -48,9 +60,25 @@ export class CityRenderer {
  }
  }
  for(const b of s.bridges){const z=b.position.z,d=b.dimensions.depth;for(const dz of [-d/2-2,d/2+2]){this.box('#e6dfc8',0,7,z+dz,152,3,2);for(const x of [-48,48])this.box('#b9baa6',x,2,z+dz,5,8,5);}}
- for(const p of s.parks){const {x,z}=p.position,{width:w,depth:d}=p.dimensions;this.box('#97b67f',x,3,z,w+5,1,d+5);this.box('#ded5b6',x,4,z,w,.5,7);this.box('#ded5b6',x,4,z,7,.5,d);this.part('cylinder','#d5d7c3',x,4.5,z,13,2,13);this.part('cylinder','#7fb4b2',x,5.7,z,10,.5,10);}
+ for(const p of s.parks){const {x,z}=p.position,{width:w,depth:d}=p.dimensions;this.box('#97b67f',x,3,z,w+5,1,d+5);this.box('#ded5b6',x,4,z,w,.5,7);this.box('#ded5b6',x,4,z,7,.5,d);if(x<0){
+ this.part('cylinder','#d5d7c3',
+  x,4.5,z,13,2,13);
+ this.part('cylinder','#7fb4b2',
+  x,5.7,z,10,.5,10);
+ }else{
+ this.box('#d7cab0',x,4.4,z,16,.6,16);
+ this.box('#c3b59a',x,4.8,z,8,.2,8);
+ }}
  // Gentle landscaped relief is limited to the outer boundary, away from plots.
  for(const x of [-580,580])for(const z of [-400,-100,200,420])this.part('sphere','#a7bd8d',x,0,z,20,9,65);
+
+ // Additional park furniture and public spaces.
+ for(const p of parkDetails(s)){
+  this.box(
+   p.color,p.x,p.y,p.z,
+   p.width,p.height,p.depth
+  );
+ }
  for(const b of s.buildings)this.building(b);
  for(const t of s.trees){const {x,z}=t.position,h=t.dimensions.height,w=t.dimensions.width;this.part('cylinder','#8b8164',x,6,z,1.5,8,1.5);this.part('sphere',t.visual.color,x,h*.65+5,z,w,h*.48,w);}
  }
@@ -118,7 +146,49 @@ export class CityRenderer {
  if(b.type==='school')this.box('#ceab60',x,y+h+2,z,w*.7,2,d*.65,id);
  if(b.type==='civic'){for(let dx=-w/2+3;dx<w/2;dx+=6)this.part('cylinder','#f5ecd9',x+dx,12,z+d/2+2,1.5,16,1.5,id);this.box('#e8dfca',x,21,z+d/2+2,w+3,3,6,id);}
  }
- flush(){const dummy=new THREE.Object3D();for(const batch of this.batches.values()){const material=new THREE.MeshStandardMaterial({color:batch.color,roughness:.85,side:['roof','front','side'].includes(batch.shape)?THREE.DoubleSide:THREE.FrontSide});const mesh=new THREE.InstancedMesh(this.geometries[batch.shape],material,batch.items.length);mesh.userData.ids=[];batch.items.forEach((p,i)=>{dummy.position.set(p.x,p.y,p.z);dummy.scale.set(p.w,p.h,p.d);dummy.rotation.set(0,p.rotation,0);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);mesh.userData.ids[i]=p.id;});mesh.castShadow=!['front','side'].includes(batch.shape);mesh.receiveShadow=true;mesh.computeBoundingSphere();this.scene.add(mesh);if(mesh.userData.ids.some(Boolean))this.pickables.push(mesh);}this.batches.clear();}
+ flush(){const dummy=new THREE.Object3D();for(const batch of this.batches.values()){const material=new THREE.MeshStandardMaterial({color:batch.color,roughness:.85,side:['roof','front','side'].includes(batch.shape)?THREE.DoubleSide:THREE.FrontSide});
+ material.userData.nightGlow=
+  ['front','side'].includes(batch.shape)
+   ?'window'
+   :batch.color==='#f0dfaf'
+    ?'lamp':null;
+
+ const mesh=new THREE.InstancedMesh(this.geometries[batch.shape],material,batch.items.length);mesh.userData.ids=[];batch.items.forEach((p,i)=>{dummy.position.set(p.x,p.y,p.z);dummy.scale.set(p.w,p.h,p.d);dummy.rotation.set(0,p.rotation,0);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);mesh.userData.ids[i]=p.id;});mesh.castShadow=!['front','side'].includes(batch.shape);mesh.receiveShadow=true;mesh.computeBoundingSphere();this.scene.add(mesh);if(mesh.userData.ids.some(Boolean))this.pickables.push(mesh);}this.batches.clear();}
+
+ setDayNight(night){
+
+  this.scene.background.set(
+   night?'#111c30':'#e9eee7'
+  );
+
+  setLightingMode(this.lights,night);
+
+  this.scene.traverse(object=>{
+
+   const material=object.material;
+   const glow=material?.userData?.nightGlow;
+
+   if(!glow)return;
+
+   material.emissive.set(
+    night
+     ?glow==='lamp'
+      ?'#ffcf80':'#ffd393'
+     :'#000000'
+   );
+
+   material.emissiveIntensity=
+    night
+     ?glow==='lamp'?1.8:.8
+     :0;
+  });
+
+  this.renderer.shadowMap.needsUpdate=true;
+
+  this.dirty=true;
+  this.onInvalidate?.();
+ }
+
  highlight(building){this.dirty=true;this.onInvalidate?.();if(this.outline){this.scene.remove(this.outline);this.outline.geometry.dispose();this.outline.material.dispose();this.outline=null;}if(!building)return;const {width:w,depth:d,height:h}=building.dimensions;const geo=new THREE.BoxGeometry(w+10,h+12,d+10);this.outline=new THREE.LineSegments(new THREE.EdgesGeometry(geo),new THREE.LineBasicMaterial({color:'#e49b42'}));geo.dispose();this.outline.position.set(building.position.x,4+h/2,building.position.z);this.scene.add(this.outline);}
  resize(container){
  const rect=container.getBoundingClientRect();
