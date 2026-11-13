@@ -9,7 +9,12 @@ export function createCityState(config) {
  const random=new SeededRandom(config.seed), {buildings,parks}=generateBuildings(config,random);
  const roads=generateRoads(config);
  const bridges=config.rowCoordinates.map(z=>({id:`bridge-${z}`,type:'bridge',district:'Citywide',position:{x:0,y:1,z},dimensions:{width:150,depth:z===0?24:16,height:2},orientation:0,visual:{color:'#c7c6ae'}}));
- return {version:cVersion(config),name:config.name,seed:config.seed,boundary:config.size,terrain:generateTerrain(config),water:generateWater(config),roads,bridges,buildings,parks,trees:generateVegetation(config,random,parks)};
+ return {version:cVersion(config),name:config.name,seed:config.seed,boundary:config.size,terrain:generateTerrain(config),water:generateWater(config),roads,bridges,buildings,parks,trees:generateVegetation(config,random,parks)
+ .filter(t=>!roads.some(r=>r.axis &&
+  Math.abs(t.position.x-r.position.x)<
+   (t.dimensions.width+r.dimensions.width)/2+5 &&
+  Math.abs(t.position.z-r.position.z)<
+   (t.dimensions.width+r.dimensions.depth)/2+5))};
 }
 
-function cVersion(config){return config.layout?'U0.2-dev':'U0.1';}
+function cVersion(config){return config.roadNetwork?'U0.2-dev':config.layout?'U0.2-dev':'U0.1';}

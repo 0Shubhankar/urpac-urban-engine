@@ -19,7 +19,30 @@ export class CityRenderer {
  for(const x of [-74,74])this.box('#dbd7bf',x,3,0,20,2,1200);
  for(let z=-570;z<600;z+=52)this.box('#92c1bd',0,3.6,z,65,0.1,1.2);
  for(const r of s.roads){const {x,z}=r.position,{width:w,depth:d}=r.dimensions;this.box('#d4d2bc',x,3,z,w+9,2,d+9);this.box('#6f7b75',x,4.1,z,w,.3,d);
- if(w<100){for(let k=-520;k<540;k+=25)if(!s.roads.some(q=>q.dimensions.width>100&&Math.abs(q.position.z-k)<20))this.box('#d8d7ba',x,4.4,k,1,.1,10);}else{for(let k=-520;k<540;k+=25)if(!s.roads.some(q=>q.dimensions.width<100&&Math.abs(q.position.x-k)<20))this.box('#d8d7ba',k,4.4,z,10,.1,1);}}
+
+ const axis=r.axis??(w<100?'z':'x');
+ const length=axis==='z'?d:w;
+ const center=axis==='z'?z:x;
+
+ for(let k=center-length/2+15;
+     k<center+length/2-10;k+=25){
+
+  const px=axis==='z'?x:k;
+  const pz=axis==='z'?k:z;
+
+  if(s.roads.some(q=>
+   q!==r &&
+   (q.axis??(q.dimensions.width<100?'z':'x'))!==axis &&
+   Math.abs(px-q.position.x)<q.dimensions.width/2+7 &&
+   Math.abs(pz-q.position.z)<q.dimensions.depth/2+7
+  ))continue;
+
+  this.box(
+   '#d8d7ba',px,4.4,pz,
+   axis==='z'?1:10,.1,axis==='z'?10:1
+  );
+ }
+ }
  for(const b of s.bridges){const z=b.position.z,d=b.dimensions.depth;for(const dz of [-d/2-2,d/2+2]){this.box('#e6dfc8',0,7,z+dz,152,3,2);for(const x of [-48,48])this.box('#b9baa6',x,2,z+dz,5,8,5);}}
  for(const p of s.parks){const {x,z}=p.position,{width:w,depth:d}=p.dimensions;this.box('#97b67f',x,3,z,w+5,1,d+5);this.box('#ded5b6',x,4,z,w,.5,7);this.box('#ded5b6',x,4,z,7,.5,d);this.part('cylinder','#d5d7c3',x,4.5,z,13,2,13);this.part('cylinder','#7fb4b2',x,5.7,z,10,.5,10);}
  // Gentle landscaped relief is limited to the outer boundary, away from plots.

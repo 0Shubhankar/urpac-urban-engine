@@ -1,11 +1,6 @@
 import './styles/main.css';
 import defaultConfig from '../scenarios/default-city.json';
-import westhaven from '../scenarios/westhaven.json';
-const params=new URLSearchParams(location.search);
-const config=params.get('city')==='westhaven'?westhaven:defaultConfig;
-const switcher=document.querySelector('#scenario');
-switcher.value=config===westhaven?'westhaven':'riverbend';
-switcher.onchange=()=>{const url=new URL(location.href);url.searchParams.set('city',switcher.value);location.href=url.href;};
+const config=defaultConfig;
 document.querySelector('.location h1').textContent=config.name;
 document.querySelector('#seed').textContent=`SEED ${config.seed}`;
 import {CityEngine} from './core/CityEngine.js';
